@@ -1,5 +1,3 @@
-# thinkmorse
-Python script for flashing the ThinkPad lid LED in Morse code
+# applemorse
 
-## Prerequisites
-To have the control over the lid LED you need `ec_sys` kernel module loaded with write support enabled. To do this, add `ec_sys.write_support=1` to your kernel parameters. 
+Flashes the Apple logo on the lid o the pre-2016 Macbooks with morse code (Linux only, requires apple-smc)
