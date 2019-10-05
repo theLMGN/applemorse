@@ -2,7 +2,8 @@
 
 from time import sleep
 
-text_string = "MM7XRT"
+text_string = "HELLO"
+kbb_file = "/sys/class/backlight/intel_backlight/brightness"
 
 MORSE_CODE_DICT = { 'A':'.-', 'B':'-...',
                     'C':'-.-.', 'D':'-..', 'E':'.',
@@ -47,43 +48,42 @@ def text_to_morse(txt):
 
 
 def led(state):
+    file = open(kbb_file, 'w')
     if state:
-        led = open("/sys/kernel/debug/ec/ec0/io", "wb")
-        led.seek(12)
-        led.write(b"\x8a")
-        led.flush()
+        file.write('1388')
     else:
-        led = open("/sys/kernel/debug/ec/ec0/io", "wb")
-        led.seek(12)
-        led.write(b"\x0a")
-        led.flush()
+        file.write("0")
+    file.close()
 
-if __name__ == "__main__":
-    while True:
-        led(False)
-        morse_string = text_to_morse(text_string)
-        for ind,ch in enumerate(morse_string[:-1]):
-            if ch == ".":
-                led(True)
-                sleep(multiplier * DOT_LENGTH)
-                led(False)
+try:
+    if __name__ == "__main__":
+        while True:
+            led(False)
+            morse_string = text_to_morse(text_string)
+            for ind,ch in enumerate(morse_string[:-1]):
+                if ch == ".":
+                    led(True)
+                    sleep(multiplier * DOT_LENGTH)
+                    led(False)
 
-                if morse_string[ind+1] != " " or morse_string[ind+1] != "/":
-                    sleep(multiplier * INNER_ELE_GAP)
+                    if morse_string[ind+1] != " " or morse_string[ind+1] != "/":
+                        sleep(multiplier * INNER_ELE_GAP)
 
-            elif ch == "-":
-                led(True)
-                sleep(multiplier * DASH_LENGTH)
-                led(False)
+                elif ch == "-":
+                    led(True)
+                    sleep(multiplier * DASH_LENGTH)
+                    led(False)
 
-                if morse_string[ind+1] != " " or morse_string[ind+1] != "/":
-                    sleep(multiplier * INNER_ELE_GAP)
+                    if morse_string[ind+1] != " " or morse_string[ind+1] != "/":
+                        sleep(multiplier * INNER_ELE_GAP)
 
-            elif ch == " ":
-                if morse_string[ind+1] != "/" or morse_string[ind-1] != "/":
-                    sleep(multiplier * LETTER_GAP)
+                elif ch == " ":
+                    if morse_string[ind+1] != "/" or morse_string[ind-1] != "/":
+                        sleep(multiplier * LETTER_GAP)
 
-            elif ch == "/":
-                sleep(multiplier * WORD_GAP)
+                elif ch == "/":
+                    sleep(multiplier * WORD_GAP)
 
-        sleep(multiplier * LOOP_GAP)
+            sleep(multiplier * LOOP_GAP)
+except KeyboardInterrupt:
+    led(True)
